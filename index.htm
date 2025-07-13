@@ -10,8 +10,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Serene Professional -->
-    <!-- Application Structure Plan: The application is designed as a task-oriented, multi-step interactive toolkit to guide an applicant in transforming their job application. It now includes dedicated sections for both cover letter and resume enhancement. The flow starts with an applicant introduction, followed by a visual diagnosis of the cover letter, interactive learning modules for SIA's core values, and practical tools for cover letter refinement. New sections are introduced for resume strategy, including interactive guidance on key resume components (summary, experience, skills) with before/after examples and contextual explanations. The "General Resume Pointers" section has been made interactive, allowing users to click and reveal detailed advice. The application concludes with comprehensive checklists and a contact form. This structure prioritizes active learning and direct application of strategic advice, making the report's content highly actionable and user-friendly. -->
-    <!-- Visualization & Content Choices: Report Info: SIA Core Values, Before/After writing examples, Language advice (for cover letter), Resume best practices, Key resume sections. Goal: Inform, Compare, Organize, Guide. Viz/Presentation Method: Interactive cards for SIA values, side-by-side text comparisons for cover letter language and resume bullet points, clickable "language swap" elements, visual blueprints for letter/resume structure, and a radar chart for initial cover letter analysis. New interactive elements for resume sections (tabs/cards) reveal detailed guidance. The "General Resume Pointers" are now presented as clickable accordion-style cards. Interaction: Clicks on cards/tabs reveal detailed content, hover effects provide tips, and checklists track progress. The contact form allows text input and includes a 'copy to clipboard' function. Justification: This interactive approach turns a static report into a dynamic workshop, which is more effective for skill-building across both application components. Library/Method: Vanilla JS for all interactions. Chart.js for the introductory radar chart. All diagrams are built with styled HTML/CSS. -->
+    <!-- Application Structure Plan: The application is designed as a task-oriented, multi-step interactive toolkit to guide an applicant in transforming their job application. It now includes dedicated sections for both cover letter and resume enhancement. The flow starts with an applicant introduction, followed by a visual diagnosis of the cover letter, interactive learning modules for SIA's core values, and practical tools for cover letter refinement. New sections are introduced for resume strategy, including interactive guidance on key resume components (summary, experience, skills) with before/after examples and contextual explanations. The "General Resume Pointers" section has been made interactive, allowing users to click and reveal detailed advice. The "Final Review Checklist (Resume)" has been significantly enhanced with interactive checklist items, a progress bar, and dynamic suggestions to make it more engaging and helpful. New "Final Review Checklist (Resume)" and "Interview Preparation" sections have been added to provide comprehensive guidance for the entire application process. The application concludes with comprehensive checklists and a contact form. This structure prioritizes active learning and direct application of strategic advice, making the report's content highly actionable and user-friendly. -->
+    <!-- Visualization & Content Choices: Report Info: SIA Core Values, Before/After writing examples, Language advice (for cover letter), Resume best practices, Key resume sections, Interview questions. Goal: Inform, Compare, Organize, Guide. Viz/Presentation Method: Interactive cards for SIA values, side-by-side text comparisons for cover letter language and resume bullet points, clickable "language swap" elements, visual blueprints for letter/resume structure, and a radar chart for initial cover letter analysis. New interactive elements for resume sections (tabs/cards) reveal detailed guidance. The "General Resume Pointers" are now presented as clickable accordion-style cards. The new "Interview Preparation" section uses clickable questions to reveal detailed advice. Both Cover Letter and Resume checklists are now interactive with progress bars and dynamic suggestions. Interaction: Clicks on cards/tabs reveal detailed content, hover effects provide tips, and checklists track progress. The contact form allows text input and includes a 'copy to clipboard' function. Justification: This interactive approach turns a static report into a dynamic workshop, which is more effective for skill-building across both application components and interview readiness. Library/Method: Vanilla JS for all interactions. Chart.js for the introductory radar chart. All diagrams are built with styled HTML/CSS. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
@@ -42,13 +42,27 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
-        .checklist-item input:checked + label .icon {
-            background-color: #10B981;
-            border-color: #10B981;
+        /* Checklist item styling for the icon (the square box) */
+        .checklist-item .icon {
+            border: 2px solid #D1D5DB; /* Default gray border */
+            background-color: transparent; /* Default transparent background */
         }
+        /* When the input is checked, change the icon's background and border */
+        .checklist-item input:checked + label .icon {
+            background-color: #D1FAE5; /* Light green background for the box when checked */
+            border-color: #10B981; /* Green border for the box when checked */
+        }
+        /* Styling for the SVG tick inside the icon */
+        .checklist-item .icon svg {
+            display: none; /* Hidden by default */
+            stroke: #10B981; /* Green color for the tick mark */
+            color: #10B981; /* Fallback for currentColor, though stroke is primary */
+        }
+        /* When the input is checked, show the SVG tick */
         .checklist-item input:checked + label .icon svg {
             display: block;
         }
+
         .chart-container {
             position: relative; 
             width: 100%; 
@@ -80,6 +94,35 @@
             background-color: #f0f4f8;
             border-color: #a7d9e8;
         }
+        .interview-question-card {
+            cursor: pointer;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .interview-question-card:hover {
+            background-color: #f0f4f8;
+            border-color: #a7d9e8;
+        }
+
+        /* Congratulations Overlay Styling */
+        #congratulations-overlay {
+            background-color: rgba(0, 0, 0, 0.5); /* Translucent black background */
+        }
+        /* Animation for the congratulations content */
+        @keyframes pop-in {
+            0% { transform: scale(0.5); opacity: 0; }
+            80% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes pulse-emoji {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        .animate-pop-in {
+            animation: pop-in 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+        }
+        .animate-pulse-emoji {
+            animation: pulse-emoji 1s infinite alternate;
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -92,6 +135,7 @@
                 <a href="#home" class="nav-link font-medium pb-1">Home</a>
                 <a href="#cover-letter-guide" class="nav-link font-medium pb-1">Cover Letter Guide</a>
                 <a href="#resume-guide" class="nav-link font-medium pb-1">Resume Guide</a>
+                <a href="#interview-prep" class="nav-link font-medium pb-1">Interview Prep</a>
                 <a href="#contact" class="nav-link font-medium pb-1">Contact Us</a>
             </div>
             <button id="mobile-menu-button" class="md:hidden p-2 rounded-md text-[#0B3D4F] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#0B3D4F]">
@@ -103,6 +147,7 @@
             <a href="#home" class="block nav-link font-medium py-1">Home</a>
             <a href="#cover-letter-guide" class="block nav-link font-medium py-1">Cover Letter Guide</a>
             <a href="#resume-guide" class="block nav-link font-medium py-1">Resume Guide</a>
+            <a href="#interview-prep" class="block nav-link font-medium py-1">Interview Prep</a>
             <a href="#contact" class="block nav-link font-medium py-1">Contact Us</a>
         </div>
     </header>
@@ -123,7 +168,7 @@
                     <a href="https://www.linkedin.com/in/luckythwal" target="_blank" class="flex items-center hover:text-[#0B3D4F] transition-colors">
                         <span class="mr-1">🔗</span> LinkedIn
                     </a>
-                    <a href="https://www.instagram.com/lucky_thwal__" target="_blank" class="flex items-center hover:text-[#0B3D4F] transition-colors">
+                    <a href="https://www.instagram.com/luckythwal" target="_blank" class="flex items-center hover:text-[#0B3D4F] transition-colors">
                         <span class="mr-1">📸</span> Instagram
                     </a>
                 </div>
@@ -210,11 +255,20 @@
                     </div>
                 </section>
                 
-                <section id="checklist" class="mb-16 md:mb-24">
+                <section id="cover-letter-checklist" class="mb-16 md:mb-24">
                     <h4 class="text-xl md:text-2xl font-bold text-center text-[#0B3D4F] mb-2">4. Final Review Checklist (Cover Letter)</h4>
-                    <p class="text-center text-lg text-gray-600 mb-12 max-w-3xl mx-auto">Before you send your application, run through this final checklist to ensure your cover letter is polished, persuasive, and perfectly aligned with what Singapore Airlines is looking for.</p>
+                    <p class="text-center text-lg text-gray-600 mb-12 max-w-3xl mx-auto">Before you send your application, run through this final checklist to ensure your cover letter is polished, persuasive, and perfectly aligned with what Singapore Airlines is looking for. Track your progress below!</p>
                     <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-8">
-                        <div id="checklist-container" class="space-y-4">
+                        <div class="mb-6">
+                            <div class="text-sm font-medium text-gray-700 mb-2 flex justify-between items-center">
+                                <span>Progress</span>
+                                <span id="cover-letter-progress-text">0/8 Completed</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                <div id="cover-letter-progress-bar" class="bg-[#0B3D4F] h-2.5 rounded-full transition-all duration-500 ease-out" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                        <div id="cover-letter-checklist-container" class="space-y-4">
                             <!-- Checklist items will be inserted here by JS -->
                         </div>
                     </div>
@@ -248,6 +302,35 @@
                     </div>
                 </div>
             </section>
+
+            <section id="resume-checklist" class="mt-16 mb-16 md:mb-24">
+                <h4 class="text-xl md:text-2xl font-bold text-center text-[#0B3D4F] mb-2">Final Review Checklist (Resume)</h4>
+                <p class="text-center text-lg text-gray-600 mb-12 max-w-3xl mx-auto">Use this interactive checklist to ensure your resume is perfectly tailored and free of errors before submission. Track your progress below!</p>
+                <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <div class="mb-6">
+                        <div class="text-sm font-medium text-gray-700 mb-2 flex justify-between items-center">
+                            <span>Progress</span>
+                            <span id="resume-progress-text">0/8 Completed</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5">
+                            <div id="resume-progress-bar" class="bg-[#0B3D4F] h-2.5 rounded-full transition-all duration-500 ease-out" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                    <div id="resume-checklist-container" class="space-y-4">
+                        <!-- Resume Checklist items will be inserted here by JS -->
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <section id="interview-prep" class="mb-16 md:mb-24">
+            <h3 class="text-2xl md:text-3xl font-bold text-center text-[#0B3D4F] mb-2">Interview Preparation</h3>
+            <p class="text-center text-lg text-gray-600 mb-12 max-w-3xl mx-auto">Prepare for your interview by practicing common questions and understanding what recruiters are looking for. Click on each question to reveal guidance.</p>
+            <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                <div id="interview-questions-container" class="space-y-4">
+                    <!-- Interview questions will be inserted here by JS -->
+                </div>
+            </div>
         </section>
 
         <section id="contact" class="mb-16 md:mb-24">
@@ -293,6 +376,17 @@
         </div>
     </footer>
 
+    <!-- Congratulations Overlay -->
+    <section id="congratulations-overlay" class="fixed inset-0 flex items-center justify-center z-[100] transition-opacity duration-500 hidden opacity-0">
+        <div class="text-white text-center p-8 rounded-xl shadow-2xl backdrop-blur-sm bg-white/20 transform scale-95 opacity-0 transition-all duration-700 ease-out" id="congratulations-content">
+            <h2 class="text-5xl font-extrabold mb-4 animate-pop-in">
+                <span class="inline-block animate-pulse-emoji">🎉</span> Congratulations! <span class="inline-block animate-pulse-emoji">🎉</span>
+            </h2>
+            <p class="text-2xl font-semibold">Your Resume is Polished and Ready to Shine!</p>
+            <p class="mt-4 text-lg">You've mastered the art of crafting a compelling application.</p>
+        </div>
+    </section>
+
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -333,7 +427,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { 
             id: 'care',
             title: 'Care', 
-            icon: '💖',
+            icon: '�',
             description: "Provide examples of genuine empathy, personalized attention, and going the extra mile for others' comfort.",
             before: "I like helping people.",
             after: "I once helped a distressed, non-English speaking customer locate a lost item by patiently using visual cues and a translation app. The relief on their face was a powerful reminder of the impact of genuine care and communication."
@@ -363,15 +457,15 @@ document.addEventListener('DOMContentLoaded', () => {
         { title: "Paragraph 4: The Closing", content: "Reiterate your enthusiasm and readiness for the commitment (relocation, bond). Include a clear, professional call to action, expressing your eagerness for an interview. Thank them for your time." },
     ];
     
-    const checklistData = [
-        { id: 'check1', text: "Is the letter addressed to a specific person or 'Dear Hiring Manager'?" },
-        { id: 'check2', text: "Does the opening paragraph grab attention and state the specific role?" },
-        { id: 'check3', text: "Have I replaced generic skills with at least one specific story or example (Show, Don't Tell)?" },
-        { id: 'check4', text: "Does the letter explicitly connect my experiences to SIA's core values (e.g., Care, Excellence)?" },
-        { id: 'check5', text: "Is the language confident and professional, avoiding weak phrases like 'I think' or 'Honestly'?" },
-        { id: 'check6', text: "Have I confirmed my readiness for key requirements (relocation, height, service bond)?" },
-        { id: 'check7', text: "Is the letter concise and limited to a single page?" },
-        { id: 'check8', text: "Have I proofread the letter meticulously for any typos or grammatical errors?" }
+    const coverLetterChecklistData = [
+        { id: 'cl-check1', text: "Is the letter addressed to a specific person or 'Dear Hiring Manager'?", suggestion: "Personalizing the salutation shows attention to detail. Aim for a specific name if possible, otherwise 'Dear Hiring Manager' is professional." },
+        { id: 'cl-check2', text: "Does the opening paragraph grab attention and state the specific role?", suggestion: "Your opening is your hook! Make it compelling and immediately clear what role you're applying for and why SIA." },
+        { id: 'cl-check3', text: "Have I replaced generic skills with at least one specific story or example (Show, Don't Tell)?", suggestion: "Don't just state you're a good communicator; tell a brief story that demonstrates it. Concrete examples are powerful." },
+        { id: 'cl-check4', text: "Does the letter explicitly connect my experiences to SIA's core values (e.g., Care, Excellence)?", suggestion: "Weave SIA's values into your narrative. Show how your past actions align with their principles, not just generic service." },
+        { id: 'cl-check5', text: "Is the language confident and professional, avoiding weak phrases like 'I think' or 'Honestly'?", suggestion: "Project confidence through direct, assertive language. Eliminate qualifiers that might undermine your message." },
+        { id: 'cl-check6', text: "Have I confirmed my readiness for key requirements (relocation, height, service bond)?", suggestion: "Explicitly addressing these shows commitment and that you've read the requirements carefully." },
+        { id: 'cl-check7', text: "Is the letter concise and limited to a single page?", suggestion: "Recruiters are busy. A one-page letter is ideal for impact and readability. Be ruthless with editing!" },
+        { id: 'cl-check8', text: "Have I proofread the letter meticulously for any typos or grammatical errors?", suggestion: "A single error can detract from your professionalism. Proofread multiple times, and consider using a spell-checker or asking a friend to review." }
     ];
 
     const resumeSectionData = [
@@ -496,14 +590,14 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     const resumeChecklistData = [
-        { id: 'resume-check1', text: "Is my resume concise (ideally one page for less than 10 years experience)?" },
-        { id: 'resume-check2', text: "Does my Professional Summary clearly highlight my most relevant skills for Cabin Crew?" },
-        { id: 'resume-check3', text: "Do my work experience bullet points start with strong action verbs?" },
-        { id: 'resume-check4', text: "Have I quantified my achievements in my work experience whenever possible?" },
-        { id: 'resume-check5', text: "Are my skills listed clearly, including languages and safety certifications?" },
-        { id: 'resume-check6', text: "Is my contact information accurate and professional?" },
-        { id: 'resume-check7', text: "Have I tailored my resume to the SIA job description using keywords?" },
-        { id: 'resume-check8', text: "Have I proofread my resume meticulously for any typos or grammatical errors?" }
+        { id: 'res-check1', text: "Is my resume concise (ideally one page for less than 10 years experience)?", suggestion: "A clear, focused resume respects the recruiter's time. Eliminate anything that doesn't directly support your candidacy for SIA." },
+        { id: 'res-check2', text: "Does my Professional Summary clearly highlight my most relevant skills for Cabin Crew?", suggestion: "Ensure your summary is a powerful, tailored pitch, using keywords from the SIA job description." },
+        { id: 'res-check3', text: "Do my work experience bullet points start with strong action verbs?", suggestion: "Action verbs make your contributions clear and impactful. Think 'Managed,' 'Delivered,' 'Ensured,' not 'Responsible for.'" },
+        { id: 'res-check4', text: "Have I quantified my achievements in my work experience whenever possible?", suggestion: "Numbers speak louder than words! Quantify your impact (e.g., 'improved satisfaction by 15%') to show tangible results." },
+        { id: 'res-check5', text: "Are my skills listed clearly, including languages and safety certifications?", suggestion: "Highlight all relevant skills, especially languages and safety qualifications, as these are critical for Cabin Crew." },
+        { id: 'res-check6', text: "Is my contact information accurate and professional?", suggestion: "Double-check your phone number, email, and LinkedIn URL. A small error here can cost you an interview!" },
+        { id: 'res-check7', text: "Have I tailored my resume to the SIA job description using keywords?", suggestion: "ATS systems look for keywords. Mirror the language used in the job posting to increase your visibility." },
+        { id: 'res-check8', text: "Have I proofread my resume meticulously for any typos or grammatical errors?", suggestion: "A flawless resume demonstrates attention to detail, a key trait for Cabin Crew. Read it aloud, or ask someone else to review." }
     ];
 
     const generalResumePointersData = [
@@ -533,6 +627,41 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     ];
 
+    const interviewQuestionsData = [
+        {
+            question: 'Tell me about yourself.',
+            guidance: 'This is your elevator pitch. Focus on your relevant experience, skills, and career aspirations, linking them directly to the Cabin Crew role and SIA. Keep it concise (1-2 minutes) and highlight how your background makes you a strong fit for SIA.<br><br>Example Line: "As a former Cabin Crew member with Air India Express, I honed my skills in delivering exceptional passenger service and ensuring safety in dynamic environments. My passion for global cultures and commitment to service excellence align perfectly with Singapore Airlines\' renowned hospitality, and I am eager to contribute to your world-class team."'
+        },
+        {
+            question: 'Why do you want to be a Cabin Crew member?',
+            guidance: 'Express genuine passion for the role beyond just travel. Talk about your love for service, interacting with people, working in a dynamic environment, and contributing to passenger comfort and safety. Connect it to your personal values.<br><br>Example Line: "My desire to be a Cabin Crew member stems from a deep-seated passion for service and connecting with people from diverse backgrounds. I thrive in dynamic environments where every day presents new challenges and opportunities to make a positive impact on someone\'s journey, ensuring their comfort and safety above all else."'
+        },
+        {
+            question: 'Why Singapore Airlines?',
+            guidance: 'Show you\'ve done your research. Mention SIA\'s reputation for excellence, specific awards, service philosophy, or values that resonate with you. Articulate how your values align with SIA\'s culture and how you envision contributing to their world-class service.<br><br>Example Line: "Singapore Airlines has always stood out to me as the epitome of aviation excellence, particularly for its commitment to the \'Singapore Girl\' ethos and unparalleled customer care. I am deeply inspired by your dedication to innovation and meticulous attention to detail, values that I believe are crucial for delivering truly world-class hospitality, and I am eager to uphold and contribute to that legacy."'
+        },
+        {
+            question: 'Describe a time you provided excellent customer service.',
+            guidance: 'Use the STAR method (Situation, Task, Action, Result). Choose an example where you went above and beyond, anticipated needs, or resolved a difficult situation with empathy and professionalism. Quantify the impact if possible.<br><br>Example Line: "During a particularly challenging flight, a passenger became distressed due to severe turbulence. I calmly approached them, offered reassurance, and engaged them in conversation to distract them, even providing a warm blanket and a comforting drink. By actively listening and anticipating their needs, I was able to transform their experience, and they later expressed immense gratitude for the personalized care."'
+        },
+        {
+            question: 'Tell me about a time you dealt with a difficult customer/colleague.',
+            guidance: 'Again, use STAR. Focus on your calm demeanor, active listening, problem-solving skills, and ability to de-escalate tension. Emphasize how you maintained professionalism and achieved a positive outcome.<br><br>Example Line: "In a previous role, a colleague and I had differing approaches on how to handle a complex customer complaint. Instead of escalating, I initiated a private discussion to understand their perspective, proposed a hybrid solution that incorporated both our ideas, and we successfully resolved the issue together, ensuring customer satisfaction and strengthening our team dynamic."'
+        },
+        {
+            question: 'How do you handle stress or pressure?',
+            guidance: 'Provide a specific example where you successfully managed a stressful situation. Discuss your coping mechanisms (e.g., prioritizing tasks, staying organized, deep breathing) and how you maintain composure and effectiveness under pressure.<br><br>Example Line: "During a medical emergency mid-flight, I remained calm and focused, immediately recalling my training to assist the lead crew member. I prioritized tasks, communicated clearly with passengers, and followed protocols precisely. This experience reinforced my ability to perform effectively under high-pressure situations while maintaining a reassuring presence for others."'
+        },
+        {
+            question: 'What are your strengths and weaknesses?',
+            guidance: 'For strengths, choose 2-3 that are highly relevant to Cabin Crew (e.g., empathy, communication, adaptability) and provide brief examples. For weaknesses, choose one that is genuine but not critical to the role, and explain what steps you are taking to improve it (e.g., public speaking, delegating tasks).<br><br>Example Line (Strength): "One of my key strengths is my adaptability; in aviation, unexpected situations are common, and I excel at quickly adjusting to new circumstances while maintaining service standards, ensuring seamless operations regardless of challenges."<br><br>Example Line (Weakness): "A weakness I\'m actively working on is my tendency to be overly self-critical. To address this, I\'ve started practicing self-reflection and focusing on constructive feedback, which helps me grow without dwelling excessively on minor imperfections, allowing me to maintain a positive mindset." '
+        },
+        {
+            question: 'Do you meet the height requirements and are you willing to relocate?',
+            guidance: 'Confirm directly and confidently. Reiterate your commitment to the role, including the service bond and relocation to Singapore, demonstrating your readiness and dedication.<br><br>Example Line: "Yes, I meet all the specified height requirements, and I am fully prepared and enthusiastic to relocate to Singapore and commit to the service bond. I view this as an exciting opportunity for long-term career growth with Singapore Airlines."'
+        }
+    ];
+
 
     const valueTabsContainer = document.getElementById('value-tabs-container');
     const valueContentContainer = document.getElementById('value-content-container');
@@ -541,8 +670,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const tab = document.createElement('button');
         tab.className = `value-tab w-full text-left font-semibold p-3 rounded-lg transition-colors duration-300 flex items-center gap-3 whitespace-nowrap ${index === 0 ? 'active' : 'hover:bg-gray-100'}`;
         tab.dataset.id = value.id;
-        tab.innerHTML = `<span>${value.icon}</span> ${value.title}`;
         valueTabsContainer.appendChild(tab);
+        // Using innerHTML directly for icons to ensure they render correctly
+        tab.innerHTML = `<span>${value.icon}</span> ${value.title}`;
     });
 
     const displayValueContent = (id) => {
@@ -609,21 +739,56 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     
-    const checklistContainer = document.getElementById('checklist-container');
-    checklistData.forEach(item => {
+    const coverLetterChecklistContainer = document.getElementById('cover-letter-checklist-container');
+    const coverLetterProgressBar = document.getElementById('cover-letter-progress-bar');
+    const coverLetterProgressText = document.getElementById('cover-letter-progress-text');
+
+    const updateCoverLetterProgress = () => {
+        const checkedItems = coverLetterChecklistContainer.querySelectorAll('input[type="checkbox"]:checked').length;
+        const totalItems = coverLetterChecklistData.length;
+        const percentage = (checkedItems / totalItems) * 100;
+        coverLetterProgressBar.style.width = `${percentage}%`;
+        coverLetterProgressText.textContent = `${checkedItems}/${totalItems} Completed`;
+    };
+
+    coverLetterChecklistData.forEach(item => {
         const div = document.createElement('div');
-        div.className = 'checklist-item';
+        div.className = 'checklist-item border rounded-lg overflow-hidden transition-all duration-300 pointer-card';
         div.innerHTML = `
-            <input type="checkbox" id="${item.id}" class="hidden">
-            <label for="${item.id}" class="flex items-center cursor-pointer">
-                <span class="icon w-6 h-6 mr-3 border-2 border-gray-300 rounded-md flex items-center justify-center transition-colors">
+            <label for="${item.id}" class="flex items-center p-3 cursor-pointer">
+                <input type="checkbox" id="${item.id}" class="hidden">
+                <span class="icon w-6 h-6 mr-3 border-2 border-gray-300 rounded-md flex items-center justify-center transition-colors flex-shrink-0">
                     <svg class="w-4 h-4 text-white hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
                 </span>
-                <span class="text-gray-700">${item.text}</span>
+                <span class="text-gray-700 font-medium flex-grow">${item.text}</span>
             </label>
+            <div class="p-3 bg-blue-50 text-blue-800 border-t border-blue-200" style="display: none;">
+                <p class="text-sm">${item.suggestion}</p>
+            </div>
         `;
-        checklistContainer.appendChild(div);
+        coverLetterChecklistContainer.appendChild(div);
+
+        const checkbox = div.querySelector(`#${item.id}`);
+        const suggestionBox = div.querySelector('.p-3.bg-blue-50');
+        const svgIcon = div.querySelector('.icon svg'); // Get reference to the SVG
+
+        checkbox.addEventListener('change', () => {
+            if (checkbox.checked) {
+                suggestionBox.style.display = 'block';
+                div.classList.add('bg-green-50', 'border-green-200');
+                div.classList.remove('hover:bg-gray-100', 'border-gray-300');
+                svgIcon.style.display = 'block'; // Show the SVG
+            } else {
+                suggestionBox.style.display = 'none';
+                div.classList.remove('bg-green-50', 'border-green-200');
+                div.classList.add('hover:bg-gray-100', 'border-gray-300');
+                svgIcon.style.display = 'none'; // Hide the SVG
+            }
+            updateCoverLetterProgress();
+        });
     });
+
+    updateCoverLetterProgress(); // Initial progress update
 
     // Resume Guide Logic
     const resumeTabsContainer = document.getElementById('resume-tabs-container');
@@ -633,6 +798,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const tab = document.createElement('button');
         tab.className = `resume-tab w-full text-left font-semibold p-3 rounded-lg transition-colors duration-300 flex items-center gap-3 whitespace-nowrap ${index === 0 ? 'active' : 'hover:bg-gray-100'}`;
         tab.dataset.id = section.id;
+        // Using innerHTML directly for icons to ensure they render correctly
         tab.innerHTML = `<span>${section.icon}</span> ${section.title}`;
         resumeTabsContainer.appendChild(tab);
     });
@@ -670,6 +836,106 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="p-3 text-gray-600" style="display: none;">${item.content}</div>
         `;
         generalResumePointersContainer.appendChild(div);
+
+        div.addEventListener('click', () => {
+            const content = div.querySelector('.p-3.text-gray-600');
+            const icon = div.querySelector('svg');
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                icon.classList.add('rotate-180');
+            } else {
+                content.style.display = 'none';
+                icon.classList.remove('rotate-180');
+            }
+        });
+    });
+
+    // Resume Checklist Logic
+    const resumeChecklistContainer = document.getElementById('resume-checklist-container');
+    const resumeProgressBar = document.getElementById('resume-progress-bar');
+    const resumeProgressText = document.getElementById('resume-progress-text');
+    const congratulationsOverlay = document.getElementById('congratulations-overlay');
+    const congratulationsContent = document.getElementById('congratulations-content');
+
+    const updateResumeProgress = () => {
+        const checkedItems = resumeChecklistContainer.querySelectorAll('input[type="checkbox"]:checked').length;
+        const totalItems = resumeChecklistData.length;
+        const percentage = (checkedItems / totalItems) * 100;
+        resumeProgressBar.style.width = `${percentage}%`;
+        resumeProgressText.textContent = `${checkedItems}/${totalItems} Completed`;
+
+        if (checkedItems === totalItems) {
+            // Trigger congratulations
+            congratulationsOverlay.classList.remove('hidden');
+            setTimeout(() => {
+                congratulationsOverlay.classList.remove('opacity-0');
+                congratulationsContent.classList.remove('scale-95', 'opacity-0');
+                congratulationsContent.classList.add('animate-pop-in'); // Apply pop-in animation
+            }, 10); // Small delay to allow hidden to be removed first
+
+            setTimeout(() => {
+                congratulationsOverlay.classList.add('opacity-0');
+                congratulationsContent.classList.add('scale-95', 'opacity-0');
+                congratulationsContent.classList.remove('animate-pop-in'); // Remove animation class
+                setTimeout(() => {
+                    congratulationsOverlay.classList.add('hidden');
+                }, 500); // Wait for fade out transition
+            }, 2000); // Display for 2 seconds
+        }
+    };
+
+    resumeChecklistData.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'checklist-item border rounded-lg overflow-hidden transition-all duration-300 pointer-card';
+        div.innerHTML = `
+            <label for="${item.id}" class="flex items-center p-3 cursor-pointer">
+                <input type="checkbox" id="${item.id}" class="hidden">
+                <span class="icon w-6 h-6 mr-3 border-2 border-gray-300 rounded-md flex items-center justify-center transition-colors flex-shrink-0">
+                    <svg class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
+                </span>
+                <span class="text-gray-700 font-medium flex-grow">${item.text}</span>
+            </label>
+            <div class="p-3 bg-blue-50 text-blue-800 border-t border-blue-200" style="display: none;">
+                <p class="text-sm">${item.suggestion}</p>
+            </div>
+        `;
+        resumeChecklistContainer.appendChild(div);
+
+        const checkbox = div.querySelector(`#${item.id}`);
+        const suggestionBox = div.querySelector('.p-3.bg-blue-50');
+        const svgIcon = div.querySelector('.icon svg'); // Get reference to the SVG
+
+        checkbox.addEventListener('change', () => {
+            if (checkbox.checked) {
+                suggestionBox.style.display = 'block';
+                div.classList.add('bg-green-50', 'border-green-200');
+                div.classList.remove('hover:bg-gray-100', 'border-gray-300');
+                svgIcon.style.display = 'block'; // Show the SVG
+            } else {
+                suggestionBox.style.display = 'none';
+                div.classList.remove('bg-green-50', 'border-green-200');
+                div.classList.add('hover:bg-gray-100', 'border-gray-300');
+                svgIcon.style.display = 'none'; // Hide the SVG
+            }
+            updateResumeProgress();
+        });
+    });
+
+    updateResumeProgress(); // Initial progress update
+
+    // Interview Questions Logic
+    const interviewQuestionsContainer = document.getElementById('interview-questions-container');
+    interviewQuestionsData.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'interview-question-card border rounded-lg overflow-hidden';
+        div.innerHTML = `
+            <div class="p-3 bg-gray-100 font-semibold text-[#0B3D4F] flex justify-between items-center">
+                <span>${item.question}</span>
+                <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+            </div>
+            <div class="p-3 text-gray-600" style="display: none;">${item.guidance}</div>
+        `;
+        interviewQuestionsContainer.appendChild(div);
 
         div.addEventListener('click', () => {
             const content = div.querySelector('.p-3.text-gray-600');
