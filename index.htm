@@ -10,8 +10,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Serene Professional -->
-    <!-- Application Structure Plan: The application is designed as a task-oriented, multi-step interactive toolkit to guide an applicant in transforming their job application. It now includes dedicated sections for both cover letter and resume enhancement. The flow starts with an applicant introduction, followed by a visual diagnosis of the cover letter, interactive learning modules for SIA's core values, and practical tools for cover letter refinement. New sections are introduced for resume strategy, including interactive guidance on key resume components (summary, experience, skills) with before/after examples and contextual explanations. The "General Resume Pointers" section has been made interactive, allowing users to click and reveal detailed advice. The "Final Review Checklist (Resume)" has been significantly enhanced with interactive checklist items, a progress bar, and dynamic suggestions to make it more engaging and helpful. New "Final Review Checklist (Resume)" and "Interview Preparation" sections have been added to provide comprehensive guidance for the entire application process. The application concludes with comprehensive checklists and a contact form. This structure prioritizes active learning and direct application of strategic advice, making the report's content highly actionable and user-friendly. -->
-    <!-- Visualization & Content Choices: Report Info: SIA Core Values, Before/After writing examples, Language advice (for cover letter), Resume best practices, Key resume sections, Interview questions. Goal: Inform, Compare, Organize, Guide. Viz/Presentation Method: Interactive cards for SIA values, side-by-side text comparisons for cover letter language and resume bullet points, clickable "language swap" elements, visual blueprints for letter/resume structure, and a radar chart for initial cover letter analysis. New interactive elements for resume sections (tabs/cards) reveal detailed guidance. The "General Resume Pointers" are now presented as clickable accordion-style cards. The new "Interview Preparation" section uses clickable questions to reveal detailed advice. Both Cover Letter and Resume checklists are now interactive with progress bars and dynamic suggestions. Interaction: Clicks on cards/tabs reveal detailed content, hover effects provide tips, and checklists track progress. The contact form allows text input and includes a 'copy to clipboard' function. Justification: This interactive approach turns a static report into a dynamic workshop, which is more effective for skill-building across both application components and interview readiness. Library/Method: Vanilla JS for all interactions. Chart.js for the introductory radar chart. All diagrams are built with styled HTML/CSS. -->
+    <!-- Application Structure Plan: The application is designed as a task-oriented, multi-step interactive toolkit to guide an applicant in transforming their job application. It now includes dedicated sections for both cover letter and resume enhancement. The flow starts with an applicant introduction, followed by a visual diagnosis of the cover letter, interactive learning modules for SIA's core values, and practical tools for cover letter refinement. New sections are introduced for resume strategy, including interactive guidance on key resume components (summary, experience, skills) with before/after examples and contextual explanations. The "General Resume Pointers" section has been made interactive, allowing users to click and reveal detailed advice. The "Final Review Checklist (Resume)" has been significantly enhanced with interactive checklist items, a progress bar, and dynamic suggestions to make it more engaging and helpful. New "Final Review Checklist (Resume)" and "Interview Preparation" sections have been added to provide comprehensive guidance for the entire application process. A new "Frequently Asked Questions (FAQ)" section has been added with an interactive, two-column layout. The application concludes with comprehensive checklists and a contact form. This structure prioritizes active learning and direct application of strategic advice, making the report's content highly actionable and user-friendly. -->
+    <!-- Visualization & Content Choices: Report Info: SIA Core Values, Before/After writing examples, Language advice (for cover letter), Resume best practices, Key resume sections, Interview questions, FAQs. Goal: Inform, Compare, Organize, Guide. Viz/Presentation Method: Interactive cards for SIA values, side-by-side text comparisons for cover letter language and resume bullet points, clickable "language swap" elements, visual blueprints for letter/resume structure, and a radar chart for initial cover letter analysis. New interactive elements for resume sections (tabs/cards) reveal detailed guidance. The "General Resume Pointers" are now presented as clickable accordion-style cards. The new "Interview Preparation" section uses clickable questions to reveal detailed advice. Both Cover Letter and Resume checklists are now interactive with progress bars and dynamic suggestions. The new FAQ section uses an interactive accordion-style display in a two-column layout. Interaction: Clicks on cards/tabs reveal detailed content, hover effects provide tips, and checklists track progress. The contact form allows text input and includes a 'copy to clipboard' function. Justification: This interactive approach turns a static report into a dynamic workshop, which is more effective for skill-building across both application components and interview readiness. Library/Method: Vanilla JS for all interactions. Chart.js for the introductory radar chart. All diagrams are built with styled HTML/CSS. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
@@ -102,6 +102,29 @@
             background-color: #f0f4f8;
             border-color: #a7d9e8;
         }
+        .faq-item-question {
+            cursor: pointer;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .faq-item-question:hover {
+            background-color: #f0f4f8;
+            border-color: #a7d9e8;
+        }
+
+        /* FAQ Answer Animation */
+        .faq-item-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease-out, border-color 0.3s ease-out;
+            padding: 0 1rem; /* Initial padding, no vertical padding when collapsed */
+            border-top: 1px solid transparent; /* Start transparent, add on expand */
+        }
+        .faq-item-answer.open {
+            max-height: 500px; /* Adjust based on max expected content height */
+            padding: 1rem; /* Full padding when open */
+            border-color: #E5E7EB; /* Show border when open */
+        }
+
 
         /* Congratulations Overlay Styling */
         #congratulations-overlay {
@@ -136,6 +159,7 @@
                 <a href="#cover-letter-guide" class="nav-link font-medium pb-1">Cover Letter Guide</a>
                 <a href="#resume-guide" class="nav-link font-medium pb-1">Resume Guide</a>
                 <a href="#interview-prep" class="nav-link font-medium pb-1">Interview Prep</a>
+                <a href="#faq-section" class="nav-link font-medium pb-1">FAQs</a>
                 <a href="#contact" class="nav-link font-medium pb-1">Contact Us</a>
             </div>
             <button id="mobile-menu-button" class="md:hidden p-2 rounded-md text-[#0B3D4F] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#0B3D4F]">
@@ -148,6 +172,7 @@
             <a href="#cover-letter-guide" class="block nav-link font-medium py-1">Cover Letter Guide</a>
             <a href="#resume-guide" class="block nav-link font-medium py-1">Resume Guide</a>
             <a href="#interview-prep" class="block nav-link font-medium py-1">Interview Prep</a>
+            <a href="#faq-section" class="block nav-link font-medium py-1">FAQs</a>
             <a href="#contact" class="block nav-link font-medium py-1">Contact Us</a>
         </div>
     </header>
@@ -333,6 +358,16 @@
             </div>
         </section>
 
+        <section id="faq-section" class="mb-16 md:mb-24">
+            <h3 class="text-2xl md:text-3xl font-bold text-center text-[#0B3D4F] mb-2">Frequently Asked Questions (FAQs)</h3>
+            <p class="text-center text-lg text-gray-600 mb-12 max-w-3xl mx-auto">Find quick answers to common questions about the Cabin Crew application process for Singapore Airlines.</p>
+            <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                <div id="faq-container" class="grid md:grid-cols-2 gap-8">
+                    <!-- FAQ items will be inserted here by JS -->
+                </div>
+            </div>
+        </section>
+
         <section id="contact" class="mb-16 md:mb-24">
             <h3 class="text-2xl md:text-3xl font-bold text-center text-[#0B3D4F] mb-2">Contact Us</h3>
             <p class="text-center text-lg text-gray-600 mb-12 max-w-3xl mx-auto">Have questions or feedback? Send us a message! You can also easily copy your message to share it elsewhere.</p>
@@ -427,7 +462,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { 
             id: 'care',
             title: 'Care', 
-            icon: '�',
+            icon: '💖',
             description: "Provide examples of genuine empathy, personalized attention, and going the extra mile for others' comfort.",
             before: "I like helping people.",
             after: "I once helped a distressed, non-English speaking customer locate a lost item by patiently using visual cues and a translation app. The relief on their face was a powerful reminder of the impact of genuine care and communication."
@@ -662,6 +697,41 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     ];
 
+    const faqData = [
+        {
+            question: 'What is the minimum age requirement for Cabin Crew?',
+            answer: 'Applicants must be at least 18 years old due to legislative requirements.'
+        },
+        {
+            question: 'Is a Bachelor\'s Degree mandatory?',
+            answer: 'Yes, a Bachelor\'s Degree from a recognized university is a prerequisite.'
+        },
+        {
+            question: 'What are the height requirements?',
+            answer: 'A minimum height requirement of 1.58m is necessary to ensure the ability to perform safety and emergency procedures onboard.'
+        },
+        {
+            question: 'Do I need to be fluent in English?',
+            answer: 'Yes, fluency in English and strong communication skills are essential for interacting with a diverse international clientele.'
+        },
+        {
+            question: 'Am I required to relocate to Singapore?',
+            answer: 'Yes, a willingness to relocate to Singapore and a commitment to serving a compulsory bond are stipulated.'
+        },
+        {
+            question: 'What kind of training is provided?',
+            answer: 'Cabin Crew members undergo intensive training that covers safety protocols, product knowledge, and grooming, along with advanced customer service skills.'
+        },
+        {
+            question: 'How important is a "service-first mindset"?',
+            answer: 'A service-first mindset is crucial, but it should be demonstrated through examples of anticipating passenger needs and skillfully managing challenging situations with professionalism and empathy.'
+        },
+        {
+            question: 'Can I apply if my experience is not directly in aviation?',
+            answer: 'Yes, but it is important to explicitly link your experience to transferable skills like problem-solving, leadership, adaptability, and remaining calm under pressure.'
+        }
+    ];
+
 
     const valueTabsContainer = document.getElementById('value-tabs-container');
     const valueContentContainer = document.getElementById('value-content-container');
@@ -758,7 +828,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <label for="${item.id}" class="flex items-center p-3 cursor-pointer">
                 <input type="checkbox" id="${item.id}" class="hidden">
                 <span class="icon w-6 h-6 mr-3 border-2 border-gray-300 rounded-md flex items-center justify-center transition-colors flex-shrink-0">
-                    <svg class="w-4 h-4 text-white hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
+                    <svg class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
                 </span>
                 <span class="text-gray-700 font-medium flex-grow">${item.text}</span>
             </label>
@@ -945,6 +1015,49 @@ document.addEventListener('DOMContentLoaded', () => {
                 icon.classList.add('rotate-180');
             } else {
                 content.style.display = 'none';
+                icon.classList.remove('rotate-180');
+            }
+        });
+    });
+
+    // FAQ Logic
+    const faqContainer = document.getElementById('faq-container');
+    faqData.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'faq-item border rounded-lg overflow-hidden shadow-sm';
+        div.innerHTML = `
+            <div class="faq-item-question p-4 bg-gray-50 font-semibold text-[#0B3D4F] flex justify-between items-center">
+                <span>${item.question}</span>
+                <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+            </div>
+            <div class="faq-item-answer p-4 text-gray-700 border-t border-gray-200">
+                <p>${item.answer}</p>
+            </div>
+        `;
+        faqContainer.appendChild(div);
+
+        const questionDiv = div.querySelector('.faq-item-question');
+        const answerDiv = div.querySelector('.faq-item-answer');
+        const icon = div.querySelector('svg');
+
+        // Initially hide the answer content by setting max-height to 0
+        answerDiv.style.maxHeight = '0';
+        answerDiv.style.paddingTop = '0';
+        answerDiv.style.paddingBottom = '0';
+        answerDiv.style.borderTopColor = 'transparent';
+
+        questionDiv.addEventListener('click', () => {
+            if (answerDiv.style.maxHeight === '0px') {
+                answerDiv.style.maxHeight = answerDiv.scrollHeight + 'px'; // Set to scrollHeight for dynamic height
+                answerDiv.style.paddingTop = '1rem';
+                answerDiv.style.paddingBottom = '1rem';
+                answerDiv.style.borderTopColor = '#E5E7EB';
+                icon.classList.add('rotate-180');
+            } else {
+                answerDiv.style.maxHeight = '0';
+                answerDiv.style.paddingTop = '0';
+                answerDiv.style.paddingBottom = '0';
+                answerDiv.style.borderTopColor = 'transparent';
                 icon.classList.remove('rotate-180');
             }
         });
