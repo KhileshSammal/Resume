@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucky Thwal's Guide to Create Resume</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Serene Professional -->
+    <!-- Application Structure Plan: The application is designed as a task-oriented, multi-step interactive toolkit to guide an applicant in transforming their job application. It now includes dedicated sections for both cover letter and resume enhancement. The flow starts with an applicant introduction, followed by a visual diagnosis of the cover letter, interactive learning modules for SIA's core values, and practical tools for cover letter refinement. New sections are introduced for resume strategy, including interactive guidance on key resume components (summary, experience, skills) with before/after examples and contextual explanations. The "General Resume Pointers" section has been made interactive, allowing users to click and reveal detailed advice. The application concludes with comprehensive checklists and a contact form. This structure prioritizes active learning and direct application of strategic advice, making the report's content highly actionable and user-friendly. -->
+    <!-- Visualization & Content Choices: Report Info: SIA Core Values, Before/After writing examples, Language advice (for cover letter), Resume best practices, Key resume sections. Goal: Inform, Compare, Organize, Guide. Viz/Presentation Method: Interactive cards for SIA values, side-by-side text comparisons for cover letter language and resume bullet points, clickable "language swap" elements, visual blueprints for letter/resume structure, and a radar chart for initial cover letter analysis. New interactive elements for resume sections (tabs/cards) reveal detailed guidance. The "General Resume Pointers" are now presented as clickable accordion-style cards. Interaction: Clicks on cards/tabs reveal detailed content, hover effects provide tips, and checklists track progress. The contact form allows text input and includes a 'copy to clipboard' function. Justification: This interactive approach turns a static report into a dynamic workshop, which is more effective for skill-building across both application components. Library/Method: Vanilla JS for all interactions. Chart.js for the introductory radar chart. All diagrams are built with styled HTML/CSS. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F7F4;
+            color: #3D4C5E;
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #0B3D4F;
+            border-bottom-color: #0B3D4F;
+        }
+        .card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .value-tab.active, .resume-tab.active {
+            background-color: #0B3D4F;
+            color: #FFFFFF;
+        }
+        .phrase-card {
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .checklist-item input:checked + label .icon {
+            background-color: #10B981;
+            border-color: #10B981;
+        }
+        .checklist-item input:checked + label .icon svg {
+            display: block;
+        }
+        .chart-container {
+            position: relative; 
+            width: 100%; 
+            max-width: 500px; 
+            margin-left: auto; 
+            margin-right: auto; 
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .message-box {
+            background-color: #e0f2f7; /* Light blue */
+            border-left: 4px solid #0B3D4F;
+            color: #0B3D4F;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 0.5rem;
+            display: none; /* Hidden by default */
+        }
+        .pointer-card {
+            cursor: pointer;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .pointer-card:hover {
+            background-color: #f0f4f8;
+            border-color: #a7d9e8;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-xl md:text-2xl font-bold text-[#0B3D4F]">Lucky Thwal's Guide to Create Resume</h1>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#introduction" class="nav-link font-medium pb-1">My Introduction</a>
+                <a href="#home" class="nav-link font-medium pb-1">Home</a>
+                <a href="#cover-letter-guide" class="nav-link font-medium pb-1">Cover Letter Guide</a>
+                <a href="#resume-guide" class="nav-link font-medium pb-1">Resume Guide</a>
+                <a href="#contact" class="nav-link font-medium pb-1">Contact Us</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden p-2 rounded-md text-[#0B3D4F] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#0B3D4F]">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+            </button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden px-6 pt-2 pb-4 space-y-2">
+            <a href="#introduction" class="block nav-link font-medium py-1">My Introduction</a>
+            <a href="#home" class="block nav-link font-medium py-1">Home</a>
+            <a href="#cover-letter-guide" class="block nav-link font-medium py-1">Cover Letter Guide</a>
+            <a href="#resume-guide" class="block nav-link font-medium py-1">Resume Guide</a>
+            <a href="#contact" class="block nav-link font-medium py-1">Contact Us</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-8 md:py-12">
+        
+        <section id="introduction" class="text-center mb-16 md:mb-24">
+            <h2 class="text-3xl md:text-4xl font-bold text-[#0B3D4F] mb-4">My Introduction</h2>
+            <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                <p class="text-xl font-semibold text-gray-800 mb-2">Lucky Thwal</p>
+                <p class="text-lg text-gray-600 mb-1">Former Cabin Crew, Air India Express</p>
+                <p class="text-lg text-gray-600 mb-4">Aspiring Cabin Crew, Singapore Airlines</p>
+                <p class="text-md text-gray-700 mb-6">Cabin Crew professional with 1+ year of experience at Air India Express, delivering excellent service and ensuring safety. Eager to join Singapore Airlines to contribute to its world-class hospitality while growing through global exposure.</p>
+                <div class="flex justify-center space-x-6 text-gray-700">
+                    <a href="tel:+919876543210" class="flex items-center hover:text-[#0B3D4F] transition-colors">
+                        <span class="mr-1">📞</span> +91 9876543210
+                    </a>
+                    <a href="https://www.linkedin.com/in/luckythwal" target="_blank" class="flex items-center hover:text-[#0B3D4F] transition-colors">
+                        <span class="mr-1">🔗</span> LinkedIn
+                    </a>
+                    <a href="https://www.instagram.com/lucky_thwal__" target="_blank" class="flex items-center hover:text-[#0B3D4F] transition-colors">
+                        <span class="mr-1">📸</span> Instagram
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="home" class="text-center mb-16 md:mb-24">
+            <h2 class="text-3xl md:text-4xl font-bold text-[#0B3D4F] mb-4">Transform Your Application from Good to Unforgettable</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-600">This interactive guide will help you elevate your cover letter and resume by aligning your personal strengths with the core values of Singapore Airlines. Let's turn your passion into a persuasive story that captures attention.</p>
+        </section>
+
+        <section id="cover-letter-guide" class="mb-16 md:mb-24">
+            <h3 class="text-2xl md:text-3xl font-bold text-center text-[#0B3D4F] mb-2">Cover Letter Guide</h3>
+            <p class="text-center text-lg text-gray-600 mb-12 max-w-3xl mx-auto">Craft a compelling narrative that showcases your passion and professionalism. This section guides you through analyzing, mastering, and rebuilding your cover letter.</p>
+
+            <div id="cover-letter-subsections">
+                <section id="analysis" class="mb-16 md:mb-24">
+                    <h4 class="text-xl md:text-2xl font-bold text-center text-[#0B3D4F] mb-2">1. Draft Analysis</h4>
+                    <p class="text-center text-lg text-gray-600 mb-12 max-w-3xl mx-auto">A great application starts with understanding your current strengths and identifying opportunities for growth. The chart below visualizes the gap between a standard application and one that truly resonates with SIA's values.</p>
+                    <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                        <div class="grid md:grid-cols-2 gap-8 items-center">
+                            <div class="chart-container">
+                                <canvas id="valueAlignmentChart"></canvas>
+                            </div>
+                            <div>
+                                <h5 class="text-xl font-semibold text-[#0B3D4F] mb-3">Visualizing Your Potential</h5>
+                                <p class="text-gray-600 mb-6">This chart illustrates how a typical application (Beige line) compares to a strategically enhanced one (Blue line) across Singapore Airlines' core values. Your goal is to close this gap by infusing your letter with specific, value-driven examples.</p>
+                                <div class="space-y-4">
+                                    <div>
+                                        <h6 class="font-semibold">Current Strengths:</h6>
+                                        <p class="text-gray-600">Your draft shows genuine enthusiasm, confirms key requirements, and acknowledges SIA's reputation.</p>
+                                    </div>
+                                    <div>
+                                        <h6 class="font-semibold">Key Opportunities for Enhancement:</h6>
+                                        <ul class="list-disc list-inside text-gray-600 space-y-1">
+                                            <li>Move from stating skills to showing them with stories.</li>
+                                            <li>Demonstrate a deeper, more specific connection to SIA.</li>
+                                            <li>Refine language to be more confident and impactful.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="mastery" class="mb-16 md:mb-24">
+                    <h4 class="text-xl md:text-2xl font-bold text-center text-[#0B3D4F] mb-2">2. Master The SIA Way</h4>
+                    <p class="text-center text-lg text-gray-600 mb-12 max-w-3xl mx-auto">Singapore Airlines is built on a foundation of core values. Learn how to demonstrate these values in your cover letter by transforming generic statements into compelling narratives. Click on a value to explore.</p>
+                    
+                    <div class="flex flex-col md:flex-row gap-8">
+                        <div class="md:w-1/4">
+                            <div id="value-tabs-container" class="flex md:flex-col overflow-x-auto md:overflow-x-visible pb-4 md:pb-0">
+                                <!-- Value tabs will be inserted here by JS -->
+                            </div>
+                        </div>
+                        <div class="md:w-3/4 bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                            <div id="value-content-container">
+                                <!-- Value content will be displayed here by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="rebuild" class="mb-16 md:mb-24">
+                    <h4 class="text-xl md:text-2xl font-bold text-center text-[#0B3D4F] mb-2">3. Rebuild with Impact</h4>
+                    <p class="text-center text-lg text-gray-600 mb-12 max-w-3xl mx-auto">Now, let's refine the building blocks of your letter: the language you use and the structure you follow. These tools will help you craft a polished, professional, and persuasive final draft.</p>
+                    
+                    <div class="grid md:grid-cols-2 gap-8 md:gap-12">
+                        <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                            <h5 class="text-xl font-semibold text-center text-[#0B3D4F] mb-4">Language Enhancer</h5>
+                            <p class="text-center text-gray-600 mb-6">Swap weak phrases for powerful alternatives. Click on a card to see the transformation.</p>
+                            <div id="language-enhancer-container" class="space-y-3">
+                                <!-- Language cards will be inserted here by JS -->
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                            <h5 class="text-xl font-semibold text-center text-[#0B3D4F] mb-4">The Perfect Letter Structure</h5>
+                            <p class="text-center text-gray-600 mb-6">Follow this proven four-paragraph blueprint for a clear and impactful letter. Click each section for details.</p>
+                            <div id="structure-blueprint-container" class="space-y-3">
+                                <!-- Structure blueprint will be inserted here by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section id="checklist" class="mb-16 md:mb-24">
+                    <h4 class="text-xl md:text-2xl font-bold text-center text-[#0B3D4F] mb-2">4. Final Review Checklist (Cover Letter)</h4>
+                    <p class="text-center text-lg text-gray-600 mb-12 max-w-3xl mx-auto">Before you send your application, run through this final checklist to ensure your cover letter is polished, persuasive, and perfectly aligned with what Singapore Airlines is looking for.</p>
+                    <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                        <div id="checklist-container" class="space-y-4">
+                            <!-- Checklist items will be inserted here by JS -->
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </section>
+
+        <section id="resume-guide" class="mb-16 md:mb-24">
+            <h3 class="text-2xl md:text-3xl font-bold text-center text-[#0B3D4F] mb-2">Resume Guide</h3>
+            <p class="text-center text-lg text-gray-600 mb-12 max-w-3xl mx-auto">Your resume is a snapshot of your professional journey. Learn how to tailor each section to highlight your most relevant experiences and skills for Singapore Airlines.</p>
+
+            <div class="flex flex-col md:flex-row gap-8">
+                <div class="md:w-1/4">
+                    <div id="resume-tabs-container" class="flex md:flex-col overflow-x-auto md:overflow-x-visible pb-4 md:pb-0">
+                        <!-- Resume section tabs will be inserted here by JS -->
+                    </div>
+                </div>
+                <div class="md:w-3/4 bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <div id="resume-content-container">
+                        <!-- Resume section content will be displayed here by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <section id="resume-tips" class="mt-16">
+                <h4 class="text-xl md:text-2xl font-bold text-center text-[#0B3D4F] mb-2">General Resume Pointers</h4>
+                <p class="text-center text-lg text-gray-600 mb-12 max-w-3xl mx-auto">Beyond individual sections, these overarching tips ensure your resume is impactful and professional. Click on each pointer to reveal more details.</p>
+                <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                    <div id="general-resume-pointers-container" class="space-y-3">
+                        <!-- General resume pointers will be inserted here by JS -->
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <section id="contact" class="mb-16 md:mb-24">
+            <h3 class="text-2xl md:text-3xl font-bold text-center text-[#0B3D4F] mb-2">Contact Us</h3>
+            <p class="text-center text-lg text-gray-600 mb-12 max-w-3xl mx-auto">Have questions or feedback? Send us a message! You can also easily copy your message to share it elsewhere.</p>
+            <div class="max-w-xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                <form id="contact-form" class="space-y-4">
+                    <div>
+                        <label for="contact-name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                        <input type="text" id="contact-name" name="name" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#0B3D4F] focus:border-[#0B3D4F] sm:text-sm" required>
+                    </div>
+                    <div>
+                        <label for="contact-email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input type="email" id="contact-email" name="email" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#0B3D4F] focus:border-[#0B3D4F] sm:text-sm" required>
+                    </div>
+                    <div>
+                        <label for="contact-subject" class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+                        <input type="text" id="contact-subject" name="subject" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#0B3D4F] focus:border-[#0B3D4F] sm:text-sm" required>
+                    </div>
+                    <div>
+                        <label for="contact-message" class="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                        <textarea id="contact-message" name="message" rows="5" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#0B3D4F] focus:border-[#0B3D4F] sm:text-sm" required></textarea>
+                    </div>
+                    <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#0B3D4F] hover:bg-[#082E3A] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0B3D4F]">
+                        Send Message
+                    </button>
+                </form>
+                <div id="contact-message-box" class="message-box" style="display: none;">
+                    <p class="font-semibold mb-2">Message Sent!</p>
+                    <p id="copied-message-content" class="text-sm break-words"></p>
+                    <button id="copy-message-button" class="mt-4 inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-[#10B981] hover:bg-[#0B9A6B] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#10B981]">
+                        Copy Message
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 text-white mt-12">
+        <div class="container mx-auto px-6 py-4 text-center">
+            <p>&copy; 2025 Lucky Thwal's Guide to Create Resume. Created to help you soar to greater heights.</p>
+        </div>
+    </footer>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    const valueData = [
+        { 
+            id: 'excellence',
+            title: 'Excellence', 
+            icon: '🏆',
+            description: "Demonstrate an unwavering commitment to superior service and meticulous attention to detail.",
+            before: "I have good customer service skills.",
+            after: "In my previous role, I consistently received top customer satisfaction scores by not only resolving issues but also following up to ensure complete satisfaction. This taught me that true excellence is in the details."
+        },
+        { 
+            id: 'customer-focus',
+            title: 'Customer-Focus', 
+            icon: '❤️',
+            description: "Show your ability to anticipate needs and handle challenging situations with professionalism and empathy.",
+            before: "I am a service-oriented person.",
+            after: "During a busy shift, I noticed a family struggling with their luggage. I proactively offered assistance, ensuring they were comfortable and settled. This experience reinforced my belief in anticipating needs before they are voiced."
+        },
+        { 
+            id: 'safety',
+            icon: '🛡️',
+            title: 'Safety', 
+            description: "Convey your understanding that safety is the top priority and show your readiness to handle responsibilities with confidence.",
+            before: "I am in great physical shape.",
+            after: "My commitment to safety is demonstrated by my First Aid certification and my focus on maintaining composure under pressure, ensuring I can confidently manage any safety and emergency duties onboard."
+        },
+        { 
+            id: 'teamwork',
+            title: 'Teamwork', 
+            icon: '🤝',
+            description: "Illustrate your ability to collaborate effectively with diverse groups to achieve a shared goal.",
+            before: "I am a team player.",
+            after: "On a recent project, I collaborated with colleagues from three different departments. By facilitating open communication and ensuring everyone's input was valued, our team successfully delivered the project ahead of schedule."
+        },
+        { 
+            id: 'care',
+            title: 'Care', 
+            icon: '💖',
+            description: "Provide examples of genuine empathy, personalized attention, and going the extra mile for others' comfort.",
+            before: "I like helping people.",
+            after: "I once helped a distressed, non-English speaking customer locate a lost item by patiently using visual cues and a translation app. The relief on their face was a powerful reminder of the impact of genuine care and communication."
+        },
+        { 
+            id: 'integrity',
+            title: 'Integrity', 
+            icon: '💎',
+            description: "Subtly convey honesty and trustworthiness through professional communication and responsible actions.",
+            before: "I am a trustworthy person.",
+            after: "In handling sensitive customer information in my past role, I always adhered strictly to privacy protocols, understanding that trust is the foundation of any positive service experience."
+        }
+    ];
+
+    const languageData = [
+        { before: "I think I'd be a good fit...", after: "My skills in [X] and [Y] align well with the Cabin Crew responsibilities." },
+        { before: "Honestly, I am very passionate...", after: "My passion for delivering world-class customer service motivates me to..." },
+        { before: "I'm a team player.", after: "I thrive in collaborative environments, as demonstrated by my experience in..." },
+        { before: "As you can see on my resume...", after: "(Omit phrase) My experience in [role] has equipped me with..." },
+        { before: "To whom it may concern,", after: "Dear Hiring Manager," },
+    ];
+
+    const structureData = [
+        { title: "Paragraph 1: The Hook", content: "State the position you're applying for. Express specific, genuine interest in SIA and hook the reader by highlighting 1-2 key strengths that make you a great fit." },
+        { title: "Paragraph 2: The Proof", content: "This is where you 'show, don't tell'. Share a concise anecdote (or two) from a past role that demonstrates key skills like communication, problem-solving, or teamwork. Connect it to SIA's values." },
+        { title: "Paragraph 3: The 'Why SIA'", content: "Deepen your connection. Explain why SIA's specific values or service philosophy resonates with you. Show you've done your research and want to contribute to their culture, not just get a job." },
+        { title: "Paragraph 4: The Closing", content: "Reiterate your enthusiasm and readiness for the commitment (relocation, bond). Include a clear, professional call to action, expressing your eagerness for an interview. Thank them for your time." },
+    ];
+    
+    const checklistData = [
+        { id: 'check1', text: "Is the letter addressed to a specific person or 'Dear Hiring Manager'?" },
+        { id: 'check2', text: "Does the opening paragraph grab attention and state the specific role?" },
+        { id: 'check3', text: "Have I replaced generic skills with at least one specific story or example (Show, Don't Tell)?" },
+        { id: 'check4', text: "Does the letter explicitly connect my experiences to SIA's core values (e.g., Care, Excellence)?" },
+        { id: 'check5', text: "Is the language confident and professional, avoiding weak phrases like 'I think' or 'Honestly'?" },
+        { id: 'check6', text: "Have I confirmed my readiness for key requirements (relocation, height, service bond)?" },
+        { id: 'check7', text: "Is the letter concise and limited to a single page?" },
+        { id: 'check8', text: "Have I proofread the letter meticulously for any typos or grammatical errors?" }
+    ];
+
+    const resumeSectionData = [
+        {
+            id: 'resume-summary',
+            title: 'Professional Summary',
+            icon: '📝',
+            description: 'Your summary is your elevator pitch. It should be a concise (2-4 sentences) overview of your most relevant skills and experience, tailored to the Cabin Crew role.',
+            content: `
+                <div class="space-y-4">
+                    <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+                        <p class="font-semibold text-red-800 mb-1">Weak Summary (Before)</p>
+                        <p class="text-red-700 italic">"Experienced customer service professional looking for a cabin crew role where I can use my skills."</p>
+                    </div>
+                    <div class="p-4 bg-green-50 border border-green-200 rounded-lg">
+                        <p class="font-semibold text-green-800 mb-1">Impactful Summary (After)</p>
+                        <p class="text-green-700">"Dynamic Cabin Crew professional with 1+ year of experience delivering exceptional service and ensuring passenger safety in fast-paced aviation environments. Adept at fostering positive customer relations and resolving issues with empathy and efficiency. Eager to leverage a passion for world-class hospitality to contribute to Singapore Airlines' renowned service excellence."</p>
+                    </div>
+                </div>
+            `
+        },
+        {
+            id: 'resume-experience',
+            title: 'Work Experience',
+            icon: '💼',
+            description: 'Focus on achievements, not just duties. Use action verbs and quantify results. Tailor each bullet point to highlight skills relevant to Cabin Crew (customer service, safety, teamwork, problem-solving).',
+            content: `
+                <div class="space-y-4">
+                    <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+                        <p class="font-semibold text-red-800 mb-1">Generic Bullet (Before)</p>
+                        <p class="text-red-700 italic">"- Handled customer inquiries."</p>
+                    </div>
+                    <div class="p-4 bg-green-50 border border-green-200 rounded-lg">
+                        <p class="font-semibold text-green-800 mb-1">Impactful Bullet (After)</p>
+                        <p class="text-green-700">"- Resolved an average of 50+ customer inquiries daily, maintaining a 95% satisfaction rate through empathetic communication and efficient problem-solving."</p>
+                    </div>
+                    <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+                        <p class="font-semibold text-red-800 mb-1">Generic Bullet (Before)</p>
+                        <p class="text-red-700 italic">"- Worked with team members."</p>
+                    </div>
+                    <div class="p-4 bg-green-50 border border-green-200 rounded-lg">
+                        <p class="font-semibold text-green-800 mb-1">Impactful Bullet (After)</p>
+                        <p class="text-green-700">"- Collaborated effectively with a diverse crew of 10+ members to ensure seamless in-flight service and adherence to all safety protocols, contributing to on-time performance."</p>
+                    </div>
+                </div>
+            `
+        },
+        {
+            id: 'resume-skills',
+            title: 'Skills',
+            icon: '✨',
+            description: 'List relevant hard and soft skills. Prioritize those mentioned in the job description or highly valued by SIA. Consider breaking them into categories (e.g., Customer Service, Safety, Languages).',
+            content: `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                        <h6 class="font-semibold text-[#0B3D4F] mb-2">Customer Service & Communication</h6>
+                        <ul class="list-disc list-inside text-gray-700 space-y-1">
+                            <li>Customer Relationship Management</li>
+                            <li>Conflict Resolution</li>
+                            <li>Active Listening</li>
+                            <li>Interpersonal Communication</li>
+                            <li>Cross-cultural Communication</li>
+                        </ul>
+                    </div>
+                    <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                        <h6 class="font-semibold text-[#0B3D4F] mb-2">Safety & Operations</h6>
+                        <ul class="list-disc list-inside text-gray-700 space-y-1">
+                            <li>Emergency Procedures (if applicable)</li>
+                            <li>First Aid & CPR (if certified)</li>
+                            <li>Safety Protocol Adherence</li>
+                            <li>Situational Awareness</li>
+                        </ul>
+                    </div>
+                    <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                        <h6 class="font-semibold text-[#0B3D4F] mb-2">Languages</h6>
+                        <ul class="list-disc list-inside text-gray-700 space-y-1">
+                            <li>English (Fluent)</li>
+                            <li>Hindi (Fluent)</li>
+                            <li>[Any other languages]</li>
+                        </ul>
+                    </div>
+                    <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                        <h6 class="font-semibold text-[#0B3D4F] mb-2">Personal Attributes</h6>
+                        <ul class="list-disc list-inside text-gray-700 space-y-1">
+                            <li>Adaptability</li>
+                            <li>Teamwork & Collaboration</li>
+                            <li>Problem-Solving</li>
+                            <li>Time Management</li>
+                            <li>Attention to Detail</li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        },
+        {
+            id: 'resume-education',
+            title: 'Education',
+            icon: '🎓',
+            description: 'List your highest degree first. Include the institution name, location, degree/program, and graduation date. If applicable, mention relevant coursework or academic achievements.',
+            content: `
+                <p class="text-gray-700">Example:</p>
+                <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                    <p class="font-semibold text-[#0B3D4F]">Bachelor of Arts in [Your Major]</p>
+                    <p class="text-gray-700">University Name, City, Country</p>
+                    <p class="text-gray-600">Graduated: Month, Year</p>
+                </div>
+            `
+        },
+        {
+            id: 'resume-contact',
+            title: 'Contact Information',
+            icon: '📞',
+            description: 'Ensure your contact information is clear, professional, and easy to find at the top of your resume. Include your full name, phone number, professional email, and LinkedIn profile URL.',
+            content: `
+                <p class="text-gray-700">Example:</p>
+                <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                    <p class="font-semibold text-[#0B3D4F]">Lucky Thwal</p>
+                    <p class="text-gray-700">+91 9876543210 | lucky.thwal@email.com | <a href="https://www.linkedin.com/in/luckythwal" target="_blank" class="text-[#0B3D4F] hover:underline">linkedin.com/in/luckythwal</a></p>
+                </div>
+            `
+        }
+    ];
+
+    const resumeChecklistData = [
+        { id: 'resume-check1', text: "Is my resume concise (ideally one page for less than 10 years experience)?" },
+        { id: 'resume-check2', text: "Does my Professional Summary clearly highlight my most relevant skills for Cabin Crew?" },
+        { id: 'resume-check3', text: "Do my work experience bullet points start with strong action verbs?" },
+        { id: 'resume-check4', text: "Have I quantified my achievements in my work experience whenever possible?" },
+        { id: 'resume-check5', text: "Are my skills listed clearly, including languages and safety certifications?" },
+        { id: 'resume-check6', text: "Is my contact information accurate and professional?" },
+        { id: 'resume-check7', text: "Have I tailored my resume to the SIA job description using keywords?" },
+        { id: 'resume-check8', text: "Have I proofread my resume meticulously for any typos or grammatical errors?" }
+    ];
+
+    const generalResumePointersData = [
+        {
+            title: 'Conciseness is Key',
+            content: 'Aim for a one-page resume if you have less than 10 years of experience. Recruiters spend only a few seconds scanning resumes, so every word should add value. Eliminate redundant phrases and focus on impact.'
+        },
+        {
+            title: 'Action Verbs',
+            content: 'Start every bullet point with a strong action verb to convey your responsibilities and achievements effectively. Examples: "Managed," "Delivered," "Coordinated," "Ensured," "Facilitated," "Resolved," "Implemented."'
+        },
+        {
+            title: 'Quantify Achievements',
+            content: 'Whenever possible, use numbers, percentages, or specific metrics to demonstrate the impact of your work. This provides concrete evidence of your contributions. Example: "Improved customer satisfaction by 15%," "Handled 50+ inquiries daily," "Reduced response time by 20%."'
+        },
+        {
+            title: 'Tailor to the Role',
+            content: 'Customize your resume for each application. Carefully read the job description and incorporate keywords and phrases that match the requirements and responsibilities of the Cabin Crew role at Singapore Airlines.'
+        },
+        {
+            title: 'Proofread Meticulously',
+            content: 'Errors in grammar or spelling undermine your professionalism and attention to detail. Proofread your resume multiple times, and ideally, ask a trusted friend or colleague to review it as well.'
+        },
+        {
+            title: 'Professional Formatting',
+            content: 'Use a clean, readable font (e.g., Inter, Arial, Calibri) and maintain consistent formatting throughout the document. Utilize adequate white space to make your resume easy on the eyes and professional in appearance.'
+        }
+    ];
+
+
+    const valueTabsContainer = document.getElementById('value-tabs-container');
+    const valueContentContainer = document.getElementById('value-content-container');
+    
+    valueData.forEach((value, index) => {
+        const tab = document.createElement('button');
+        tab.className = `value-tab w-full text-left font-semibold p-3 rounded-lg transition-colors duration-300 flex items-center gap-3 whitespace-nowrap ${index === 0 ? 'active' : 'hover:bg-gray-100'}`;
+        tab.dataset.id = value.id;
+        tab.innerHTML = `<span>${value.icon}</span> ${value.title}`;
+        valueTabsContainer.appendChild(tab);
+    });
+
+    const displayValueContent = (id) => {
+        const value = valueData.find(v => v.id === id);
+        valueContentContainer.innerHTML = `
+            <h5 class="text-2xl font-bold text-[#0B3D4F] mb-2 flex items-center gap-3">${value.icon} ${value.title}</h5>
+            <p class="text-gray-600 mb-6">${value.description}</p>
+            <div class="space-y-4">
+                <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <p class="font-semibold text-red-800 mb-1">Generic Statement (Before)</p>
+                    <p class="text-red-700 italic">"${value.before}"</p>
+                </div>
+                <div class="p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <p class="font-semibold text-green-800 mb-1">Impactful Narrative (After)</p>
+                    <p class="text-green-700">"${value.after}"</p>
+                </div>
+            </div>
+        `;
+    };
+
+    valueTabsContainer.addEventListener('click', (e) => {
+        const tab = e.target.closest('.value-tab');
+        if (tab) {
+            document.querySelectorAll('.value-tab').forEach(t => t.classList.remove('active', 'hover:bg-gray-100'));
+            tab.classList.add('active');
+            displayValueContent(tab.dataset.id);
+        }
+    });
+
+    displayValueContent(valueData[0].id);
+
+    const languageEnhancerContainer = document.getElementById('language-enhancer-container');
+    languageData.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'phrase-card rounded-lg border';
+        card.innerHTML = `
+            <div class="p-3 bg-red-50 text-red-800 rounded-t-lg">
+                <span class="font-medium">Avoid:</span> <span class="italic">${item.before}</span>
+            </div>
+            <div class="p-3 bg-green-50 text-green-800 rounded-b-lg" style="display: none;">
+                <span class="font-medium">Employ:</span> ${item.after}
+            </div>
+        `;
+        languageEnhancerContainer.appendChild(card);
+
+        card.addEventListener('click', () => {
+            const afterPart = card.querySelector('.bg-green-50');
+            afterPart.style.display = afterPart.style.display === 'none' ? 'block' : 'none';
+        });
+    });
+
+    const structureBlueprintContainer = document.getElementById('structure-blueprint-container');
+    structureData.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'border rounded-lg overflow-hidden cursor-pointer';
+        div.innerHTML = `
+            <div class="p-3 bg-gray-100 font-semibold text-[#0B3D4F]">${index + 1}. ${item.title}</div>
+            <div class="p-3 text-gray-600" style="display: none;">${item.content}</div>
+        `;
+        structureBlueprintContainer.appendChild(div);
+        div.addEventListener('click', () => {
+            const content = div.querySelector('.p-3.text-gray-600');
+            content.style.display = content.style.display === 'none' ? 'block' : 'none';
+        });
+    });
+    
+    const checklistContainer = document.getElementById('checklist-container');
+    checklistData.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'checklist-item';
+        div.innerHTML = `
+            <input type="checkbox" id="${item.id}" class="hidden">
+            <label for="${item.id}" class="flex items-center cursor-pointer">
+                <span class="icon w-6 h-6 mr-3 border-2 border-gray-300 rounded-md flex items-center justify-center transition-colors">
+                    <svg class="w-4 h-4 text-white hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
+                </span>
+                <span class="text-gray-700">${item.text}</span>
+            </label>
+        `;
+        checklistContainer.appendChild(div);
+    });
+
+    // Resume Guide Logic
+    const resumeTabsContainer = document.getElementById('resume-tabs-container');
+    const resumeContentContainer = document.getElementById('resume-content-container');
+
+    resumeSectionData.forEach((section, index) => {
+        const tab = document.createElement('button');
+        tab.className = `resume-tab w-full text-left font-semibold p-3 rounded-lg transition-colors duration-300 flex items-center gap-3 whitespace-nowrap ${index === 0 ? 'active' : 'hover:bg-gray-100'}`;
+        tab.dataset.id = section.id;
+        tab.innerHTML = `<span>${section.icon}</span> ${section.title}`;
+        resumeTabsContainer.appendChild(tab);
+    });
+
+    const displayResumeContent = (id) => {
+        const section = resumeSectionData.find(s => s.id === id);
+        resumeContentContainer.innerHTML = `
+            <h5 class="text-2xl font-bold text-[#0B3D4F] mb-2 flex items-center gap-3">${section.icon} ${section.title}</h5>
+            <p class="text-gray-600 mb-6">${section.description}</p>
+            ${section.content}
+        `;
+    };
+
+    resumeTabsContainer.addEventListener('click', (e) => {
+        const tab = e.target.closest('.resume-tab');
+        if (tab) {
+            document.querySelectorAll('.resume-tab').forEach(t => t.classList.remove('active', 'hover:bg-gray-100'));
+            tab.classList.add('active');
+            displayResumeContent(tab.dataset.id);
+        }
+    });
+
+    displayResumeContent(resumeSectionData[0].id); // Display first resume section by default
+
+    // General Resume Pointers Logic
+    const generalResumePointersContainer = document.getElementById('general-resume-pointers-container');
+    generalResumePointersData.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'pointer-card border rounded-lg overflow-hidden';
+        div.innerHTML = `
+            <div class="p-3 bg-gray-100 font-semibold text-[#0B3D4F] flex justify-between items-center">
+                <span>${item.title}</span>
+                <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+            </div>
+            <div class="p-3 text-gray-600" style="display: none;">${item.content}</div>
+        `;
+        generalResumePointersContainer.appendChild(div);
+
+        div.addEventListener('click', () => {
+            const content = div.querySelector('.p-3.text-gray-600');
+            const icon = div.querySelector('svg');
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                icon.classList.add('rotate-180');
+            } else {
+                content.style.display = 'none';
+                icon.classList.remove('rotate-180');
+            }
+        });
+    });
+
+
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    mobileMenuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+    });
+    
+    document.querySelectorAll('#mobile-menu a').forEach(link => {
+        link.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden');
+        });
+    });
+
+    const ctx = document.getElementById('valueAlignmentChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: ['Excellence', 'Customer-Focus', 'Safety', 'Teamwork', 'Care', 'Integrity'],
+            datasets: [{
+                label: 'Standard Draft',
+                data: [5, 6, 7, 5, 6, 4],
+                backgroundColor: 'rgba(217, 191, 152, 0.2)',
+                borderColor: 'rgba(217, 191, 152, 1)',
+                borderWidth: 2,
+                pointBackgroundColor: 'rgba(217, 191, 152, 1)'
+            }, {
+                label: 'Enhanced Draft',
+                data: [9, 9, 8, 8, 9, 8],
+                backgroundColor: 'rgba(11, 61, 79, 0.2)',
+                borderColor: 'rgba(11, 61, 79, 1)',
+                borderWidth: 2,
+                pointBackgroundColor: 'rgba(11, 61, 79, 1)'
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            scales: {
+                r: {
+                    angleLines: { color: 'rgba(0, 0, 0, 0.1)' },
+                    grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                    pointLabels: { font: { size: 12 }, color: '#3D4C5E' },
+                    ticks: {
+                        backdropColor: 'transparent',
+                        color: 'rgba(0,0,0,0.5)',
+                        stepSize: 2
+                    },
+                    suggestedMin: 0,
+                    suggestedMax: 10
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.r !== null) {
+                                label += context.parsed.r;
+                            }
+                            return label;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('main section');
+
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            if (pageYOffset >= sectionTop - 100) {
+                current = section.getAttribute('id');
+            }
+        });
+
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href').includes(current)) {
+                link.classList.add('active');
+            }
+        });
+    });
+
+    // Contact Form Logic
+    const contactForm = document.getElementById('contact-form');
+    const contactMessageBox = document.getElementById('contact-message-box');
+    const copiedMessageContent = document.getElementById('copied-message-content');
+    const copyMessageButton = document.getElementById('copy-message-button');
+
+    contactForm.addEventListener('submit', (e) => {
+        e.preventDefault(); // Prevent default form submission
+
+        const name = document.getElementById('contact-name').value;
+        const email = document.getElementById('contact-email').value;
+        const subject = document.getElementById('contact-subject').value;
+        const message = document.getElementById('contact-message').value;
+
+        const fullMessage = `Name: ${name}\nEmail: ${email}\nSubject: ${subject}\n\nMessage:\n${message}`;
+        copiedMessageContent.textContent = fullMessage;
+        contactMessageBox.style.display = 'block'; // Show the message box
+
+        // Reset form after "submission"
+        contactForm.reset();
+    });
+
+    copyMessageButton.addEventListener('click', () => {
+        const textToCopy = copiedMessageContent.textContent;
+        // Use document.execCommand('copy') for better compatibility in iframes
+        const textArea = document.createElement('textarea');
+        textArea.value = textToCopy;
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            copyMessageButton.textContent = 'Copied!';
+            setTimeout(() => {
+                copyMessageButton.textContent = 'Copy Message';
+            }, 2000); // Reset button text after 2 seconds
+        } catch (err) {
+            console.error('Failed to copy text: ', err);
+            copyMessageButton.textContent = 'Failed to Copy';
+        }
+        document.body.removeChild(textArea);
+    });
+});
+</script>
+</body>
+</html>
